@@ -1,4 +1,4 @@
-# Handoff (paused 26 Nov 2026, resume 27 Nov)
+# Handoff (paused 26 Nov 2026 at 23:25 UTC, resume 27 Nov)
 
 ## Done: Phase 1 foundation
 - Next.js 15.5 + TypeScript, Drizzle on Postgres, Redis cache (in-process fallback), S3 file keys + signed URLs.
@@ -17,13 +17,22 @@
 - Numbering: document_sequences row lock, per tenant × branch × type × FY, any prefix/format (DM's carry over).
 - Login: Better Auth (email + password), one instance per verified host; membership required per tenant.
 - Two demo tenants (kayal, spice-route) with sample clients and enquiries.
-- Tests: 33 unit/isolation tests + 5 browser tests green; screenshots in screenshots/phase-1.
+- Login: email + password, phone OTP (existing users), and two-step login with an authenticator app
+  (TOTP + backup codes, /admin/security). Owners without two-step see a banner asking them to turn it on.
+  Phone OTP is refused for accounts with two-step on, so it can never skip the second factor.
+  SMS: dev/test print the code to the server log; production refuses until an SMS provider is added (Phase 7).
+- Super-admin console at platform.<root> (our staff only, `platform_staff`, added with `npm run staff:add`):
+  tenant list via `platform_tenant_overview()` (ids, names, status, counts; no business records). The app role
+  cannot write platform_staff. Tenant owners get 404 there; staff get 404 in tenant admins.
+- Tests: 35 unit/isolation tests + 9 browser tests green; screenshots in screenshots/phase-1.
 
 ## Next (tomorrow)
 1. Sandeep reviews and OKs the Phase 1 draft PR, then merge to main.
 2. Start the parallel module threads from main (rules below).
-3. Still open in Phase 1: phone OTP + owner TOTP (Better Auth plugins), tenant switcher hand-off between hosts
-   (today the user signs in again on the other host), super-admin login.
+3. Still open in Phase 1 (small): tenant switcher hand-off between hosts (today the user signs in again on the
+   other host); console actions (suspend/restore, plans, "log in as tenant" with audit + tenant notice) come with
+   Phase 6; make two-step mandatory for owners/staff once the design-system screens land (now a banner);
+   OTP codes are stored as Better Auth stores them (short-lived, plain) — hash them before launch.
 
 ## Rules for parallel module threads
 - Own your area: `src/db/schema/<module>.ts`, `src/commands/<module>.ts`, `src/domain/<module>/`,

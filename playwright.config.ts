@@ -4,6 +4,7 @@ const PORT = Number(process.env.E2E_PORT ?? 3100);
 
 export default defineConfig({
   testDir: 'tests/e2e',
+  fullyParallel: false,
   timeout: 60_000,
   workers: 1,
   use: { trace: 'off' },

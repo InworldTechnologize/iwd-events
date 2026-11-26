@@ -2,7 +2,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { ownerSql } from '../helpers/fixtures';
 
 /** Tables allowed to have no tenant_id: global identities and the plan catalogue. Nothing else. */
-const GLOBAL_TABLES = new Set(['tenants', 'plans', 'users', 'sessions', 'auth_accounts', 'verifications', 'platform_staff', '_migrations']);
+const GLOBAL_TABLES = new Set(['tenants', 'plans', 'users', 'sessions', 'auth_accounts', 'verifications', 'platform_staff', 'two_factors', '_migrations']);
 
 const sqlP = ownerSql();
 afterAll(async () => (await sqlP).end());

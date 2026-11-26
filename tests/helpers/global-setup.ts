@@ -14,7 +14,10 @@ export default async function setup() {
   const { runMigrations } = await import('../../src/db/migrate');
   await runMigrations(TEST_OWNER_URL, TEST_APP_URL);
   const { seedDemo } = await import('../../src/seed/demo');
-  await seedDemo();
+  const { staffUserId } = await seedDemo();
+  const owner = postgres(TEST_OWNER_URL, { max: 1, onnotice: () => {} });
+  await owner`insert into platform_staff (user_id, role) values (${staffUserId}, 'admin') on conflict do nothing`;
+  await owner.end();
   const { closeDb } = await import('../../src/db/client');
   await closeDb();
 }

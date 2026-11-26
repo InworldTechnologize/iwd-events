@@ -1,7 +1,7 @@
 /** Host parsing: pure, so it is unit-tested. */
 import { rootDomain } from '@/config/product';
 
-export type HostKind = { kind: 'marketing' } | { kind: 'tenant'; host: string } | { kind: 'invalid' };
+export type HostKind = { kind: 'marketing' } | { kind: 'platform' } | { kind: 'tenant'; host: string } | { kind: 'invalid' };
 
 export function normalizeHost(raw: string | null | undefined): string | null {
   if (!raw) return null;
@@ -15,6 +15,8 @@ export function classifyHost(raw: string | null | undefined, root = rootDomain()
   const host = normalizeHost(raw);
   if (!host) return { kind: 'invalid' };
   if (host === root || host === `www.${root}`) return { kind: 'marketing' };
+  // Super-admin console (our staff only): platform.<root>. 'platform' is a reserved slug.
+  if (host === `platform.${root}`) return { kind: 'platform' };
   return { kind: 'tenant', host };
 }
 

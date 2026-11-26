@@ -13,5 +13,5 @@ export default [
       'no-restricted-imports': ['error', { patterns: [{ group: ['@/db/client'], message: 'Use withTenant() from @/db/tenant-tx (platform lookups: @/db/platform).' }] }],
     },
   },
-  { files: ['src/db/**', 'src/auth/auth.ts', 'tests/**', 'scripts/**', 'src/seed/**'], rules: { 'no-restricted-imports': 'off' } },
+  { files: ['src/db/**', 'src/auth/auth.ts', 'src/auth/platform-users.ts', 'tests/**', 'scripts/**', 'src/seed/**'], rules: { 'no-restricted-imports': 'off' } },
 ];

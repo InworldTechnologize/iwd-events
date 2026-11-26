@@ -14,3 +14,8 @@ export async function currentUser() {
   const session = await authFor(await currentOrigin()).api.getSession({ headers: h });
   return session?.user ?? null;
 }
+
+export async function userTwoFactor(userId: string): Promise<boolean> {
+  const { isTwoFactorEnabled } = await import('./platform-users');
+  return isTwoFactorEnabled(userId);
+}

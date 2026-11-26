@@ -152,3 +152,15 @@ describe('tokens, files and hosts', () => {
     expect(list.map((m) => m.tenantId)).toEqual([ids.a.tenantId]);
   });
 });
+
+describe('platform console boundary', () => {
+  it('the app role cannot make itself platform staff', async () => {
+    const sql = rawSql();
+    const msg = await sql`insert into platform_staff (user_id, role) values (${ids.a.ownerId}, 'admin')`.then(() => 'no error', (e: Error) => e.message);
+    expect(msg).toMatch(/permission denied/);
+  });
+
+  it('platform.<root> is the console, never a tenant', async () => {
+    expect((await resolveTenantByHost('platform.localhost')).kind).toBe('platform');
+  });
+});

@@ -18,6 +18,9 @@ Open:
 - http://localhost:3000 — marketing site
 - http://kayal.localhost:3000 — demo tenant A (`/admin`: owner@kayal.demo / demo-pass-123)
 - http://spice-route.localhost:3000 — demo tenant B (owner@spiceroute.demo / demo-pass-123)
+- http://platform.localhost:3000 — super-admin console (staff@console.demo / demo-pass-123)
+
+Phone login in dev: demo owner A's phone is +91 90000 00101; the code is printed in the server log.
 
 ## Tests
 

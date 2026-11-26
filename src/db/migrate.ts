@@ -49,8 +49,9 @@ export async function runMigrations(ownerUrl: string, appUrl: string, dir = join
       revoke all on _migrations from ${appRole};
       revoke insert, update, delete on plans from ${appRole};
       revoke update, delete on audit_log from ${appRole};
+      revoke insert, update, delete on platform_staff from ${appRole};
       grant usage, select on all sequences in schema public to ${appRole};
-      grant execute on function app_tenant_id(), resolve_host(text), user_memberships(text), create_tenant(text, text, text, text) to ${appRole};
+      grant execute on function app_tenant_id(), resolve_host(text), user_memberships(text), create_tenant(text, text, text, text), platform_tenant_overview() to ${appRole};
     `);
   } finally {
     await sql.end();
