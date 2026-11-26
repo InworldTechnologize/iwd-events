@@ -1,0 +1,33 @@
+# Dev and single-VPS production. Production: set real secrets in .env, drop the minio service
+# and point S3_* at R2/Backblaze.
+services:
+  postgres:
+    image: postgres:17
+    environment: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: iwd }
+    ports: ['5432:5432']
+    volumes: [pgdata:/var/lib/postgresql/data]
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--maxmemory', '256mb', '--maxmemory-policy', 'allkeys-lru']
+    ports: ['6379:6379']
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment: { MINIO_ROOT_USER: minio, MINIO_ROOT_PASSWORD: minio12345 }
+    ports: ['9000:9000', '9001:9001']
+    volumes: [miniodata:/data]
+  web:
+    build: .
+    env_file: .env
+    depends_on: [postgres, redis]
+    profiles: [prod]
+  caddy:
+    image: caddy:2
+    ports: ['80:80', '443:443']
+    volumes: ['./deploy/Caddyfile:/etc/caddy/Caddyfile', 'caddydata:/data']
+    depends_on: [web]
+    profiles: [prod]
+volumes:
+  pgdata:
+  miniodata:
+  caddydata:

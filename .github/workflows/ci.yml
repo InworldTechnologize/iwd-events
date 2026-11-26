@@ -1,0 +1,39 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL_OWNER: postgres://postgres:postgres@localhost:5432/iwd
+      DATABASE_URL: postgres://iwd_app:iwd_app@localhost:5432/iwd
+      ROOT_DOMAIN: localhost
+      BETTER_AUTH_SECRET: ci-secret-ci-secret-ci-secret-000000
+      IWD_E2E: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - name: Unit + tenant isolation suite
+        run: npm test
+      - run: npm run build
+      - name: Dev database
+        run: npm run db:reset && npm run db:seed
+      - run: npx playwright install --with-deps chromium
+      - name: Browser isolation + screens at 5 widths
+        run: npx playwright test --trace off
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: screenshots, path: screenshots/ }
