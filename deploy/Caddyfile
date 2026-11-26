@@ -1,0 +1,17 @@
+# One VPS: Caddy terminates TLS for the product domain, every tenant subdomain and every
+# verified custom domain (on-demand TLS, approved by /api/tls-check).
+{
+	on_demand_tls {
+		ask http://web:3000/api/tls-check
+	}
+}
+
+https:// {
+	tls {
+		on_demand
+	}
+	encode zstd gzip
+	reverse_proxy web:3000 {
+		header_up X-Forwarded-Proto {scheme}
+	}
+}
